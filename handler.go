@@ -47,12 +47,7 @@ func handleDogs(w http.ResponseWriter, r *http.Request) {
 
 	breed := r.Form.Get("text")
 
-	words := strings.Fields(breed)
-	if len(words) == 2 {
-		breed = formatDogName(breed)
-	}
-
-	url := fmt.Sprintf("https://dog.ceo/api/breed/%s/images/random", breed)
+	url := fmt.Sprintf("https://dog.ceo/api/breed/%s/images/random", formatDogName(breed))
 
 	httpClient := http.Client{
 		Timeout: time.Second * 2,
@@ -83,9 +78,12 @@ func handleDogs(w http.ResponseWriter, r *http.Request) {
 
 func formatDogName(s string) string {
 	words := strings.Fields(s)
-	for i, j := 0, len(words)-1; i < j; i, j = i+1, j-1 {
-		words[i], words[j] = words[j], words[i]
-	}
+	if len(words) == 2 {
+		for i, j := 0, len(words)-1; i < j; i, j = i+1, j-1 {
+			words[i], words[j] = words[j], words[i]
+		}
 
-	return strings.Join(words, "/")
+		return strings.Join(words, "/")
+	}
+	return s
 }
